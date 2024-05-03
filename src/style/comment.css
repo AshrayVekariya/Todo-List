@@ -1,0 +1,18 @@
+.comment-box{
+    background-color: #fbfbfc;
+    border: 1px solid #0000001f;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.comment-box-size{
+    height: calc(100vh - 220px);
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.content{
+    height: calc(100vh - 110px);
+    overflow: hidden;
+    overflow-y: auto;
+}
