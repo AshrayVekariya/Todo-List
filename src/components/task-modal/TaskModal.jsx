@@ -147,7 +147,7 @@ const TaskModal = ({ open, setOpen, parentId, getTask, subTaskId, setSubTaskId, 
                             setEditId(null)
                             setSubTaskId(null)
                         } else {
-                            const response = await createSubTask(subTaskDetail)
+                            const response = await createSubTask({ ...subTaskDetail, parentId: parentId })
                             if (response.isSuccess) {
                                 getTask();
                             }
