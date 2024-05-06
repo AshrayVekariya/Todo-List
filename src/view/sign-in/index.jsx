@@ -1,5 +1,9 @@
 import React, { Fragment, useEffect, useState } from "react";
 
+// Firebase 
+import { getToken } from "firebase/messaging";
+import { messaging } from "../../firebase/firebase";
+
 // Mui
 import { Container, Box, Grid, TextField, Button, InputAdornment, Typography, Modal, InputLabel } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
@@ -48,16 +52,32 @@ const SignInPage = () => {
         confirmPassword: ''
     })
     const [open, setOpen] = useState(false);
-    const [isCreateUser, setIsCreateUser] = useState(false)
-    const [signUpError, setSignUpError] = useState({})
-    const [credential, setCredential] = useState(null)
+    const [isCreateUser, setIsCreateUser] = useState(false);
+    const [signUpError, setSignUpError] = useState({});
+    const [credential, setCredential] = useState(null);
+    const [fcmToken, setFCMToken] = useState(null);
+
+    async function requestPermission() {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+            const token = await getToken(messaging, {
+                vapidKey: 'BGC58dvWuBb-8p74hJqL04vWrdKPOefOu_rCQGoHsgmkh42yoHk5IiVLUkyp0gncIIumUepoVD4gNMzRBixykL4'
+            })
+
+            setFCMToken(token)
+        }
+    }
+
+    useEffect(() => {
+        requestPermission();
+    }, [])
 
     useEffect(() => {
         if (isSubmitting) {
             if (Object.values(errors).filter(i => i).length > 0) {
                 setIsSubmitting(false)
             } else {
-                axios.post(`/authentication/sign-in`, sigin)
+                axios.post(`/authentication/sign-in`, { ...sigin, fcmToken })
                     .then(response => {
                         if (response?.data?.isSuccess) {
                             localStorage.setItem("accessToken", response?.data?.token);
