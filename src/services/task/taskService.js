@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode'
 import axios from '../../axios/interceptor'
 import Toast from '../../components/tostify/index'
 
@@ -35,7 +36,9 @@ export const getTaskById = async (id) => {
 }
 
 export const updateTask = (id, payload) => {
-    axios.put(`/taskList/update/${id}`, payload)
+    const token = localStorage.getItem('accessToken');
+    const decoded = jwtDecode(token);
+    axios.put(`/taskList/update/${id}`, { ...payload, loggedUser: decoded.id })
         .then(res => {
             if (!res.data.isSuccess) {
                 Toast(res?.data?.message, 'error');
